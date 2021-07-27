@@ -5,12 +5,15 @@
 <script lang="ts">
 import { defineComponent, ref } from "vue";
 import { calcRem, resizeWindow } from "utils/calcRem";
-
+import isMobile from 'utils/isMobile';
 export default defineComponent({
   name: "App",
   components: {},
   setup() {
-    const designWidth = ref(750);
+    let designWidth = ref(1920);
+    if(isMobile()){
+      designWidth.value = 750;
+    }
     calcRem(designWidth.value);
     resizeWindow(designWidth.value);
   },

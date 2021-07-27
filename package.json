@@ -1,13 +1,16 @@
 {
   "name": "my-vue3-template",
   "version": "1.0.0",
-  "author":"MasterTang",
+  "author": "MasterTang",
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview"
   },
   "dependencies": {
+    "@sentry/tracing": "^6.10.0",
+    "@sentry/vue": "^6.10.0",
+    "axios": "^0.21.1",
     "less": "^4.1.1",
     "normalize.css": "^8.0.1",
     "vue": "^3.0.5",
