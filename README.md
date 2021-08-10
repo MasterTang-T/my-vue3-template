@@ -1,27 +1,56 @@
-# Vue 3 + Typescript + Vite
+# vite + ts + ant-design-vue 构建项目
 
-This template should help get you started developing with Vue 3 and Typescript in Vite.
+## vite-mock-plugin
 
-## Recommended IDE Setup
+1. yarn add mockjs vite-mock-plugin
+2. vite-config-ts
 
-[VSCode](https://code.visualstudio.com/) + [Vetur](https://marketplace.visualstudio.com/items?itemName=octref.vetur). Make sure to enable `vetur.experimental.templateInterpolationService` in settings!
+```
+import { viteMockServe } from 'vite-plugin-mock'
+plugins: [vue(), viteMockServe({
+    mockPath: 'mock',
+    localEnabled: true,
+    prodEnabled: true,
+    injectCode: `
+      import { setupProdMockServer } from '../mock/_createProductionServer';
 
-### If Using `<script setup>`
+      setupProdMockServer();
+      `,
+  })]
+```
 
-[`<script setup>`](https://github.com/vuejs/rfcs/pull/227) is a feature that is currently in RFC stage. To get proper IDE support for the syntax, use [Volar](https://marketplace.visualstudio.com/items?itemName=johnsoncodehk.volar) instead of Vetur (and disable Vetur).
+3. 外层 mock 文件夹
 
-## Type Support For `.vue` Imports in TS
+\_createProdMockServer.ts
 
-Since TypeScript cannot handle type information for `.vue` imports, they are shimmed to be a generic Vue component type by default. In most cases this is fine if you don't really care about component prop types outside of templates. However, if you wish to get actual prop types in `.vue` imports (for example to get props validation when using manual `h(...)` calls), you can use the following:
+```
+import { createProdMockServer } from 'vite-plugin-mock/es/createProdMockServer'
 
-### If Using Volar
 
-Run `Volar: Switch TS Plugin on/off` from VSCode command palette.
+import indexModule from '../mock/index';
 
-### If Using Vetur
+export function setupProdMockServer() {
+	createProdMockServer([...indexModule]);
+}
+```
 
-1. Install and add `@vuedx/typescript-plugin-vue` to the [plugins section](https://www.typescriptlang.org/tsconfig#plugins) in `tsconfig.json`
-2. Delete `src/shims-vue.d.ts` as it is no longer needed to provide module info to Typescript
-3. Open `src/main.ts` in VSCode
-4. Open the VSCode command palette
-5. Search and run "Select TypeScript version" -> "Use workspace version"
+index.ts
+
+```
+import { MockMethod } from 'vite-plugin-mock'
+export default [
+	{
+		url: '/api/mock',
+		method: 'get',
+		response: ({ query }) => {
+			return {
+				code: 0,
+				data: {
+					name: '@cname()',
+				},
+			};
+		}
+	}
+] as MockMethod[];
+
+```
